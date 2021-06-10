@@ -1,11 +1,13 @@
 package me.fevvelasquez.spring.mvc.th.form.demo.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import me.fevvelasquez.spring.mvc.th.form.demo.model.domain.User;
 
@@ -20,19 +22,17 @@ import me.fevvelasquez.spring.mvc.th.form.demo.model.domain.User;
 public class FormController {
 
 	@GetMapping
-	public String get() {
+	public String get(Model model) {
+		model.addAttribute("user", new User("", ""));
 		return "form";
 	}
 
-	@PostMapping("/v1")
-	public String process(Model model, @RequestParam String username, @RequestParam String email) {
+	@PostMapping
+	public String processAndValid(@Valid User user, BindingResult bResult, Model model) {
 
-		model.addAttribute("user", new User(username, email));
-		return "result";
-	}
-
-	@PostMapping("/v2")
-	public String process(User user, Model model) {
+		if (bResult.hasErrors()) {
+			return "form";
+		}
 
 		model.addAttribute("user", user);
 		return "result";
